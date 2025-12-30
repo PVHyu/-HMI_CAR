@@ -80,7 +80,7 @@ class CallHistory extends StatelessWidget {
               fontSize: 18,
               color: log.type == CallType.missed
                   ? const Color.fromARGB(255, 255, 255, 255)
-                  : Colors.white,
+                  : null,
             ),
           ),
           subtitle: Row(
@@ -88,8 +88,9 @@ class CallHistory extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color:
-                      log.type == CallType.missed ? Colors.grey : Colors.grey,
+                  color: log.type == CallType.missed
+                      ? const Color.fromARGB(255, 255, 255, 255)
+                      : null,
                   fontSize: 14,
                 ),
               ),
@@ -97,6 +98,13 @@ class CallHistory extends StatelessWidget {
                 const Text(' • ', style: TextStyle(color: Colors.grey)),
                 Text(
                   log.number,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ],
+              if (log.duration > 0) ...[
+                const Text(' • ', style: TextStyle(color: Colors.grey)),
+                Text(
+                  log.formattedDuration,
                   style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ],

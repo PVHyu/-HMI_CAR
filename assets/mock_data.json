@@ -1,0 +1,85 @@
+{
+  "contacts": [
+    {
+      "name": "Nguyễn Văn An",
+      "number": "0901234567"
+    },
+    {
+      "name": "Trần Thị Bình",
+      "number": "0912345678"
+    },
+    {
+      "name": "Lê Hoàng Long",
+      "number": "0987654321"
+    },
+    {
+      "name": "Phạm Minh Tuấn",
+      "number": "0934567890"
+    },
+    {
+      "name": "Đặng Quốc Huy",
+      "number": "0978123456"
+    },
+    {
+      "name": "Hoàng Gia Bảo",
+      "number": "0963456789"
+    },
+    {
+      "name": "Võ Thanh Tùng",
+      "number": "0945678123"
+    },
+    {
+      "name": "Bùi Thị Lan",
+      "number": "0926789345"
+    }
+  ],
+  "call_logs": [
+    {
+      "number": "0901234567",
+      "type": "incoming",
+      "duration": 125,
+      "timestamp": "2024-12-30T14:30:00"
+    },
+    {
+      "number": "0912345678",
+      "type": "incoming",
+      "duration": 5,
+      "timestamp": "2024-12-30T12:15:00"
+    },
+    {
+      "number": "0987654321",
+      "type": "missed",
+      "duration": 0,
+      "timestamp": "2024-12-30T09:45:00"
+    },
+    {
+      "number": "0934567890",
+      "type": "incoming",
+      "duration": 8,
+      "timestamp": "2024-12-29T16:20:00"
+    },
+    {
+      "number": "0978123456",
+      "type": "missed",
+      "duration": 0,
+      "timestamp": "2024-12-28T11:30:00"
+    },
+    {
+      "number": "0963456789",
+      "type": "incoming",
+      "duration": 17,
+      "timestamp": "2024-12-27T08:00:00"
+    }
+  ],
+  "call_settings": {
+    "ring_timeout_seconds": 15,
+    "auto_answer_enabled": false
+  },
+  "unreachable_numbers": [
+    "0999999999",
+    "0888888888",
+    "0777777777",
+    "0987654321",
+    "0978123456"
+  ]
+}
