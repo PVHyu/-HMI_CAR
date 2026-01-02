@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hmi/features/phone/models/enums.dart';
 import 'package:hmi/features/phone/viewmodels/main_viewmodel.dart';
 import 'package:hmi/features/home/home_page.dart';
-import 'phone/views/phone_page.dart';
+import 'package:hmi/features/phone/views/phone_page.dart';
+import 'package:hmi/features/media/media_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,13 +24,19 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, _) {
           return Row(
             children: [
               _sideMenu(),
-              Expanded(child: _buildPage()),
+              Expanded(
+                child: Container(
+                  color: const Color(0xFF0B0F19),
+                  child: _buildPage(),
+                ),
+              ),
             ],
           );
         },
@@ -37,15 +44,20 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  // ===== SIDEBAR =====
   Widget _sideMenu() {
     return Container(
       width: 90,
-      color: const Color.fromARGB(221, 142, 139, 139),
+      color: Colors.black,
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _menuButton(Icons.home, HmiPage.home),
+          const SizedBox(height: 40),
           _menuButton(Icons.phone, HmiPage.phone),
+          const SizedBox(height: 40),
+          _menuButton(Icons.movie, HmiPage.media),
         ],
       ),
     );
@@ -53,24 +65,24 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _menuButton(IconData icon, HmiPage page) {
     final active = _viewModel.currentPage == page;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: IconButton(
-        iconSize: 32,
-        color:
-            active ? Colors.blueAccent : const Color.fromARGB(40, 42, 37, 37),
-        onPressed: () => _viewModel.changePage(page),
-        icon: Icon(icon),
-      ),
+    return IconButton(
+      iconSize: 32,
+      color: active ? Colors.white : Colors.grey[700],
+      onPressed: () => _viewModel.changePage(page),
+      icon: Icon(icon),
     );
   }
 
+  // ===== PAGE SWITCH =====
   Widget _buildPage() {
     switch (_viewModel.currentPage) {
       case HmiPage.home:
-        return const HomePage();
+        return HomePage(onNavigate: (page) => _viewModel.changePage(page));
+
       case HmiPage.phone:
         return const PhonePage();
+      case HmiPage.media:
+        return const MediaPage();
     }
   }
 }

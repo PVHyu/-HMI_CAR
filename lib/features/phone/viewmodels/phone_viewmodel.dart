@@ -217,6 +217,13 @@ class PhoneViewModel extends ChangeNotifier {
 
   void toggleHold() {
     _isHold = !_isHold;
+    if (_isHold) {
+      _callTimer?.cancel();
+    } else {
+      _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _callDuration++;
+      });
+    }
     notifyListeners();
   }
 
@@ -277,6 +284,27 @@ class PhoneViewModel extends ChangeNotifier {
     _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _callDuration++;
       notifyListeners();
+    });
+
+    notifyListeners();
+  }
+
+  void rejectIncomingCall() {
+    _ringTimer?.cancel();
+    _callState = CallState.disconnected;
+
+    // Thêm vào lịch sử cuộc gọi nhỡ
+    final missedCall = CallLog(
+      _dialNumber,
+      CallType.missed,
+      DateTime.now(),
+      duration: 0,
+    );
+    _callLogs.insert(0, missedCall);
+
+    // Reset về trạng thái ban đầu
+    Future.delayed(const Duration(milliseconds: 500), () {
+      endCall();
     });
 
     notifyListeners();

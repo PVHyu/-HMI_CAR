@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../viewmodels/phone_viewmodel.dart';
+import '../models/enums.dart';
 import 'widgets/dial_pad.dart';
 import 'widgets/contact_list.dart';
 import 'widgets/call_history.dart';
 import 'widgets/in_call_ui.dart';
 import 'widgets/bottom_bar.dart';
-import '../models/enums.dart';
+import 'widgets/incoming_call.dart';
 
 class PhonePage extends StatefulWidget {
   const PhonePage({super.key});
@@ -39,25 +40,58 @@ class _PhonePageState extends State<PhonePage> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(_radius),
-              child: Column(
+              child: Stack(
                 children: [
-                  Expanded(
-                    child: _viewModel.isCalling
-                        ? InCallUI(viewModel: _viewModel)
-                        : Row(
-                            children: [
-                              Expanded(
-                                flex: 5,
-                                child: DialPad(viewModel: _viewModel),
+                  Column(
+                    children: [
+                      Expanded(
+                        child: _viewModel.isCalling &&
+                                _viewModel.callState != CallState.ringing
+                            ? InCallUI(viewModel: _viewModel)
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: DialPad(viewModel: _viewModel),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: _buildRightPanel(),
+                                  ),
+                                ],
                               ),
-                              Expanded(
-                                flex: 5,
-                                child: _rightPanel(),
-                              ),
-                            ],
-                          ),
+                      ),
+                      BottomBar(viewModel: _viewModel),
+                    ],
                   ),
-                  BottomBar(viewModel: _viewModel),
+
+                  // Hiển thị popup cuộc gọi đến
+                  if (_viewModel.callState == CallState.ringing)
+                    IncomingCallPopup(viewModel: _viewModel),
+
+                  // Nút test cuộc gọi đến (góc trên bên phải)
+                  if (_viewModel.callState == CallState.idle)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Test với số có trong danh bạ
+                          _viewModel.simulateIncomingCall('0901234567');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: const Text(
+                          'Test Cuộc Gọi Đến',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -67,7 +101,7 @@ class _PhonePageState extends State<PhonePage> {
     );
   }
 
-  Widget _rightPanel() {
+  Widget _buildRightPanel() {
     return Container(
       decoration: const BoxDecoration(
         border: Border(

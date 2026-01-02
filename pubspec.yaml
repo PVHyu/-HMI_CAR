@@ -60,6 +60,7 @@ flutter:
 
   assets:
     - assets/mock_data.json
+    - assets/media_mock_data.json
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

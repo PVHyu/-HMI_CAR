@@ -1,13 +1,4 @@
-// enum HmiPage { home, phone }
-
-// enum PhoneRightView { contacts, history }
-
-// enum CallType {
-//   outgoing,
-//   incoming,
-//   missed,
-// }
-enum HmiPage { home, phone }
+enum HmiPage { home, phone, media }
 
 enum PhoneRightView { contacts, history }
 

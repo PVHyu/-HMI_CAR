@@ -8,7 +8,15 @@ class CarHMIApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: false),
+      title: 'Car HMI',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0B0F19),
+        sliderTheme: const SliderThemeData(
+          activeTrackColor: Colors.white,
+          inactiveTrackColor: Colors.white24,
+          thumbColor: Colors.white,
+        ),
+      ),
       home: const MainScreen(),
     );
   }
