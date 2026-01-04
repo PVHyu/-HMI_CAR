@@ -1,11 +1,11 @@
-enum HmiPage { home, phone, media }
+enum HmiPage { home, phone, media, vehicle, settings}
 
 enum PhoneRightView { contacts, history }
 
 enum CallType {
   outgoing,
   incoming,
-  missed,
+  missed, 
 }
 
 enum CallState {

@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../media/logic/media_controller.dart';
+import '../viewmodels/media_viewmodel.dart';// Đảm bảo tên file viết thường (snake_case)
 import '../../../core/utils/format_time.dart';
 import 'media_controls.dart';
 import 'rotating_vinyl.dart';
 
 class SplitPlayer extends StatelessWidget {
-  final MediaController controller;
-  const SplitPlayer({super.key, required this.controller});
+  final MediaViewModel viewModel;
+  
+  const SplitPlayer({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
-    final song = controller.currentSong;
+    final song = viewModel.currentSong;
 
     return Row(
       children: [
         // CỘT TRÁI: Player
         Expanded(
-          flex: 5,
+          flex: 4,
           child: Container(
             margin: const EdgeInsets.only(right: 20),
             decoration: BoxDecoration(
@@ -25,8 +26,8 @@ class SplitPlayer extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    song.color.withOpacity(0.6),
-                    Colors.black.withOpacity(0.8)
+                    song.color.withOpacity(0.5),
+                    Colors.black.withOpacity(0.5)
                   ],
                 )),
             child: Padding(
@@ -39,7 +40,7 @@ class SplitPlayer extends StatelessWidget {
                     child: Center(
                       child: RotatingVinyl(
                         albumColor: song.color,
-                        isPlaying: controller.isPlaying,
+                        isPlaying: viewModel.isPlaying,
                         size: 250,
                       ),
                     ),
@@ -62,11 +63,12 @@ class SplitPlayer extends StatelessWidget {
                               fontSize: 20, color: Colors.white70)),
                       const SizedBox(height: 20),
 
+                      // --- SLIDER (THANH TRƯỢT) ---
                       Row(
                         children: [
                           Text(
                               TimeUtils.formatDuration(
-                                  controller.currentPosition),
+                                  viewModel.currentPosition),
                               style: const TextStyle(
                                   fontSize: 12, color: Colors.white)),
                           Expanded(
@@ -76,14 +78,19 @@ class SplitPlayer extends StatelessWidget {
                                   thumbShape: const RoundSliderThumbShape(
                                       enabledThumbRadius: 8)),
                               child: Slider(
-                                value: controller.currentPosition.inSeconds
+                                max: song.duration.inSeconds > 0
+                                    ? song.duration.inSeconds.toDouble()
+                                    : 1.0,
+                                value: viewModel.currentPosition.inSeconds
                                     .toDouble()
                                     .clamp(
-                                        0, song.duration.inSeconds.toDouble()),
-                                max: song.duration.inSeconds.toDouble(),
+                                        0,
+                                        song.duration.inSeconds > 0
+                                            ? song.duration.inSeconds.toDouble()
+                                            : 1.0),
                                 activeColor: Colors.white,
                                 inactiveColor: Colors.white24,
-                                onChanged: controller.seekTo,
+                                onChanged: viewModel.seekTo,
                               ),
                             ),
                           ),
@@ -94,36 +101,35 @@ class SplitPlayer extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // --- PHẦN CHỈNH SỬA TẠI ĐÂY ---
+                      // --- CONTROLS ---
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // 1. Nút Repeat (Góc trái)
                           IconButton(
                             icon: Icon(
-                              controller.isRepeatOne
+                              viewModel.isRepeatOne
                                   ? Icons.repeat_one
                                   : Icons.repeat,
-                              color: controller.isRepeatOne
+                              color: viewModel.isRepeatOne
                                   ? Colors.white
                                   : Colors.white70,
                             ),
-                            onPressed: controller.toggleRepeat,
+                            onPressed: viewModel.toggleRepeat,
                           ),
 
                           // 2. Cụm điều khiển (Giữa)
-                          // Mẹo: Đặt isFull: true để widget này tự ẩn các nút 2 bên (Shuffle/Expand) cũ đi
-                          // giúp ta tránh bị trùng lặp nút.
-                          MediaControls(controller: controller, isFull: true),
+                          // SỬA 3: Đổi 'viewModel: viewModel' thành 'controller: viewModel' 
+                          // (Để khớp với định nghĩa MediaControls bạn dùng bên FullPlayer)
+                          MediaControls(controller: viewModel, isFull: true),
 
                           // 3. Nút Fullscreen (Góc phải)
                           IconButton(
                               icon: const Icon(Icons.fullscreen,
                                   color: Colors.white),
-                              onPressed: controller.toggleViewMode),
+                              onPressed: viewModel.toggleViewMode),
                         ],
                       )
-                      // ------------------------------
                     ],
                   )
                 ],
@@ -132,13 +138,15 @@ class SplitPlayer extends StatelessWidget {
           ),
         ),
 
-        // CỘT PHẢI: Playlist (Giữ nguyên)
+        // CỘT PHẢI: Playlist
         Expanded(
-          flex: 4,
+          flex: 3,
           child: Container(
             decoration: BoxDecoration(
-                color: const Color(0xFF1E232E),
-                borderRadius: BorderRadius.circular(30)),
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white.withOpacity(0.5)),
+            ),
             child: Column(
               children: [
                 const Padding(
@@ -157,15 +165,15 @@ class SplitPlayer extends StatelessWidget {
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    itemCount: controller.playlist.length,
+                    itemCount: viewModel.playlist.length,
                     separatorBuilder: (ctx, i) => const Divider(
                         height: 1,
                         color: Colors.white10,
                         indent: 20,
                         endIndent: 20),
                     itemBuilder: (ctx, i) {
-                      final item = controller.playlist[i];
-                      final isSelected = i == controller.currentIndex;
+                      final item = viewModel.playlist[i];
+                      final isSelected = i == viewModel.currentIndex;
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 5),
@@ -194,7 +202,7 @@ class SplitPlayer extends StatelessWidget {
                             ? const Icon(Icons.graphic_eq,
                                 color: Colors.cyanAccent)
                             : null,
-                        onTap: () => controller.playSongAtIndex(i),
+                        onTap: () => viewModel.playSongAtIndex(i),
                       );
                     },
                   ),

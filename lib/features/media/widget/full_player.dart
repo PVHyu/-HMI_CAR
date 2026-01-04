@@ -1,131 +1,156 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
-import '../../media/logic/media_controller.dart';
+import 'dart:ui'; // Cần cho BackdropFilter, ImageFilter
+import '../viewmodels/media_viewmodel.dart';
 import '../../../core/utils/format_time.dart';
 import 'media_controls.dart';
-import 'rotating_vinyl.dart'; // <-- IMPORT FILE MỚI TẠO
+import 'rotating_vinyl.dart';
 
 class FullPlayer extends StatelessWidget {
-  final MediaController controller;
-  const FullPlayer({super.key, required this.controller});
+  final MediaViewModel viewModel;
+
+  const FullPlayer({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
-    final song = controller.currentSong;
+    final song = viewModel.currentSong;
 
-    return Stack(
-      children: [
-        // 1. Nền màu và Blur
-        Positioned.fill(child: Container(color: song.color)),
-        Positioned.fill(
-          child: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
-              child: Container(color: Colors.black.withOpacity(0.6)),
-            ),
-          ),
-        ),
-
-        // 2. Nội dung chính
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-          child: Column(
-            children: [
-              const Spacer(), // Đẩy đĩa xuống giữa
-
-              // --- KHU VỰC ĐĨA QUAY ---
-              Center(
-                child: RotatingVinyl(
-                  albumColor: song.color,
-                  isPlaying: controller.isPlaying,
-                  size: 220, // Kích thước lớn cho chế độ Full
+    return Scaffold(
+      backgroundColor: Colors.transparent, // Để nền trong suốt để thấy background phía sau
+      body: Stack(
+        children: [
+          // --- LỚP 1: HÌNH NỀN GRADIENT VÀ BLUR (HIỆU ỨNG KÍNH MÀU) ---
+          Positioned.fill(
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15), // Tăng độ mờ lên một chút cho ảo
+                child: Container(
+                  // SỬA: Dùng LinearGradient thay vì màu đen đơn thuần
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        // Dùng màu bài hát và đen mờ giống như bên SplitPlayer
+                        song.color.withOpacity(0.6), 
+                        Colors.black.withOpacity(0.8), 
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              // ------------------------
+            ),
+          ),
 
-              const Spacer(), // Đẩy thông tin xuống dưới
+          // --- LỚP 2: NỘI DUNG CHÍNH (Không đổi) ---
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            child: Column(
+              children: [
+                const Spacer(), // Đẩy đĩa xuống giữa
 
-              // Thông tin bài hát
-              Text(song.title,
+                // --- ĐĨA QUAY ---
+                Center(
+                  child: RotatingVinyl(
+                    albumColor: song.color,
+                    isPlaying: viewModel.isPlaying, 
+                    size: 250, // Tăng kích thước đĩa lên một chút cho chế độ full
+                  ),
+                ),
+                // ----------------
+
+                const Spacer(), // Đẩy thông tin xuống dưới
+
+                // --- THÔNG TIN BÀI HÁT ---
+                Text(
+                  song.title,
                   style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 8),
-              Text(song.artist,
-                  style: const TextStyle(fontSize: 18, color: Colors.white70)),
-              const SizedBox(height: 30),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  song.artist,
+                  style: const TextStyle(fontSize: 18, color: Colors.white70),
+                ),
+                const SizedBox(height: 30),
 
-              // Slider và Controls
-              Row(
-                children: [
-                  Text(TimeUtils.formatDuration(controller.currentPosition),
-                      style:
-                          const TextStyle(color: Colors.white70, fontSize: 12)),
-                  Expanded(
-                    child: Slider(
-                      value: controller.currentPosition.inSeconds
-                          .toDouble()
-                          .clamp(0, song.duration.inSeconds.toDouble()),
-                      max: song.duration.inSeconds.toDouble(),
-                      activeColor: Colors.white,
-                      inactiveColor: Colors.white24,
-                      onChanged: controller.seekTo,
+                // --- SLIDER (THANH TRƯỢT) ---
+                Row(
+                  children: [
+                    Text(
+                      TimeUtils.formatDuration(viewModel.currentPosition),
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
                     ),
-                  ),
-                  Text(TimeUtils.formatDuration(song.duration),
-                      style:
-                          const TextStyle(color: Colors.white70, fontSize: 12)),
-                ],
-              ),
-              const SizedBox(height: 10),
+                    Expanded(
+                      child: Slider(
+                        max: song.duration.inSeconds > 0
+                            ? song.duration.inSeconds.toDouble()
+                            : 1.0,
+                        value: viewModel.currentPosition.inSeconds
+                            .toDouble()
+                            .clamp(0, song.duration.inSeconds > 0 
+                                ? song.duration.inSeconds.toDouble() 
+                                : 1.0),
+                        activeColor: Colors.white,
+                        inactiveColor: Colors.white24,
+                        onChanged: viewModel.seekTo, 
+                      ),
+                    ),
+                    Text(
+                      TimeUtils.formatDuration(song.duration),
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
 
-              // --- PHẦN CHỈNH SỬA: REPEAT TRÁI - CONTROLS GIỮA - EXIT PHẢI ---
-              Row(
-                children: [
-                  // 1. Cụm bên TRÁI: Nút Repeat
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft, // Căn sát lề trái
-                      child: IconButton(
-                        // Nếu isRepeatOne là true thì hiện icon số 1, ngược lại hiện icon thường
-                        icon: Icon(
-                          controller.isRepeatOne
-                              ? Icons.repeat_one
-                              : Icons.repeat,
-                          color: controller.isRepeatOne
-                              ? Colors.white
-                              : Colors.white70, // Sáng lên khi bật
+                // --- CÁC NÚT ĐIỀU KHIỂN ---
+                Row(
+                  children: [
+                    // 1. Nút Repeat (Trái)
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: Icon(
+                            viewModel.isRepeatOne 
+                                ? Icons.repeat_one
+                                : Icons.repeat,
+                            color: viewModel.isRepeatOne
+                                ? Colors.white
+                                : Colors.white70,
+                          ),
+                          onPressed: () {
+                            viewModel.toggleRepeat(); 
+                          },
                         ),
-                        onPressed: () {
-                          controller.toggleRepeat(); // <--- Gọi hàm này
-                        },
                       ),
                     ),
-                  ),
-                  // 2. Cụm GIỮA: Media Controls
-                  // Play/Pause/Next/Prev sẽ luôn ở chính giữa màn hình
-                  MediaControls(controller: controller, isFull: true),
 
-                  // 3. Cụm bên PHẢI: Nút Exit Fullscreen
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight, // Căn sát lề phải
-                      child: IconButton(
-                        icon: const Icon(Icons.fullscreen_exit,
-                            color: Colors.white, size: 35),
-                        onPressed: controller.toggleViewMode,
+                    // 2. Media Controls (Giữa)
+                    MediaControls(controller: viewModel, isFull: true),
+
+                    // 3. Nút Exit Fullscreen (Phải)
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: const Icon(Icons.fullscreen_exit,
+                              color: Colors.white, size: 35),
+                          onPressed: viewModel.toggleViewMode, 
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

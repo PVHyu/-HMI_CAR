@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hmi/features/media/viewmodels/media_viewmodel.dart';
 import 'widget/full_player.dart';
 import 'widget/split_player.dart';
-import 'package:hmi/features/media/logic/media_controller.dart';
-
-final globalMediaController = MediaController();
 
 class MediaPage extends StatelessWidget {
   const MediaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Dùng ListenableBuilder thay vì BlocBuilder
-    return ListenableBuilder(
-      listenable: globalMediaController,
-      builder: (context, child) {
-        final controller = globalMediaController;
+    // 2. Gọi Singleton: Nó sẽ lấy đúng dữ liệu nhạc đang phát ở ngoài Home
+    final MediaViewModel viewModel = MediaViewModel();
 
-        // Switch giao diện
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, child) {
+        
+        // Switch giao diện dựa trên biến trong ViewModel
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: controller.isFullScreen
-              ? FullPlayer(key: const ValueKey('Full'), controller: controller)
-              : SplitPlayer(
-                  key: const ValueKey('Split'), controller: controller),
+          child: viewModel.isFullScreen
+              // 3. Truyền viewModel vào để các con cũng đồng bộ
+              ? FullPlayer(key: const ValueKey('Full'), viewModel: viewModel)
+              : SplitPlayer(key: const ValueKey('Split'), viewModel: viewModel),
         );
       },
     );

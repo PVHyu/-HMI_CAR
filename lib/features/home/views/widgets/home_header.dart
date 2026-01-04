@@ -27,76 +27,132 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: onTapAvatar,
-          child: CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.grey[800],
-            backgroundImage: (isLoggedIn && userAvatar.isNotEmpty)
-                ? NetworkImage(userAvatar)
-                : null,
-            child: (!isLoggedIn)
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
-          ),
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: Container(
-            height: 45,
-            decoration: BoxDecoration(
-              color: Colors.grey[800],
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Row(
-              children: [
-                const SizedBox(width: 15),
-                const Icon(Icons.search, color: Colors.grey),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    isLoggedIn
-                        ? "Xin chào, $userName!"
-                        : "Đăng nhập Google để đồng bộ",
-                    style: const TextStyle(color: Colors.grey),
-                    overflow: TextOverflow.ellipsis,
+    return Container(
+      height: 70, // Chiều cao cố định cho Header
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Stack(
+        alignment: Alignment.center, // Quan trọng: Căn giữa mọi thứ trong Stack
+        children: [
+          
+          // --- LỚP 1: CÁC PHẦN TỬ 2 BÊN (Trái & Phải) ---
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy ra 2 mép
+            children: [
+              
+              // [TRÁI] Avatar + Thanh tìm kiếm
+              Row(
+                children: [
+                  // Avatar (Giả lập Google)
+                  GestureDetector(
+                    onTap: onTapAvatar,
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isLoggedIn ? Colors.transparent : Colors.white,
+                        border: Border.all(
+                          color: isLoggedIn ? Colors.transparent : Colors.white,
+                          width: 2,
+                        ),
+                        image: (isLoggedIn && userAvatar.isNotEmpty)
+                            ? DecorationImage(
+                                image: NetworkImage(userAvatar),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: (!isLoggedIn)
+                          ? Center(
+                              child: Text(
+                                "G",
+                                style: TextStyle(
+                                  color: Colors.blue[700],
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 15),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              timeText,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                height: 1.0,
+
+                  const SizedBox(width: 15),
+
+                  // Thanh tìm kiếm
+                  Container(
+                    width: 320, 
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[800],
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 15),
+                        const Icon(Icons.search, color: Colors.white54, size: 20),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            isLoggedIn
+                                ? "Xin chào, $userName!"
+                                : "",
+                            style: const TextStyle(color: Colors.white54, fontSize: 13),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Text(
-              dateText,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
-            ),
-          ],
-        ),
-        const SizedBox(width: 15),
-        IconButton(
-          icon: Icon(
-            Icons.bluetooth,
-            color: isBluetoothOn ? Colors.blueAccent : Colors.grey,
+
+              // [PHẢI] Icons + Ngày tháng
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Bluetooth
+                  IconButton(
+                    icon: Icon(
+                      Icons.bluetooth,
+                      color: isBluetoothOn ? Colors.blueAccent : Colors.white54,
+                      size: 24,
+                    ),
+                    onPressed: onToggleBluetooth,
+                  ),
+                  
+                  // Wifi
+                  const Icon(Icons.wifi, color: Colors.white, size: 24),
+                  
+                  const SizedBox(width: 20),
+
+                  // Ngày tháng (Được tách riêng ra đây)
+                  Text(
+                    dateText,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          onPressed: onToggleBluetooth,
-        ),
-        const Icon(Icons.wifi, color: Colors.white),
-      ],
+
+          // --- LỚP 2: ĐỒNG HỒ Ở CHÍNH GIỮA (Nằm đè lên trên layer 1) ---
+          // Vì Stack alignment là center nên Text này sẽ luôn ở giữa màn hình
+          Text(
+            timeText,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 40, // Font to
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5, // Giãn chữ ra xíu cho đẹp
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

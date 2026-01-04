@@ -1,11 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// Giữ import này để HomeDashboard không báo lỗi, nhưng ta sẽ không dùng đến nó
+import '../../../phone/viewmodels/phone_viewmodel.dart';
 
 class PhoneCard extends StatefulWidget {
   final void Function(String number, String name)? onOpenPhone;
   final VoidCallback? onGoPhone;
-  const PhoneCard({super.key, this.onGoPhone, this.onOpenPhone});
+  
+  // Vẫn khai báo biến này để khớp với HomeDashboard, tránh lỗi biên dịch
+  final PhoneViewModel? viewModel; 
+
+  const PhoneCard({
+    super.key, 
+    this.onGoPhone, 
+    this.onOpenPhone,
+    this.viewModel // Nhận vào nhưng không dùng
+  });
 
   @override
   State<PhoneCard> createState() => _PhoneCardState();
@@ -17,49 +28,51 @@ class _PhoneCardState extends State<PhoneCard> {
 
   List<Map<String, dynamic>> _contacts = [];
   List<Map<String, dynamic>> _callLogs = [];
-
-  // Map number -> name để lookup nhanh
   final Map<String, String> _numberToName = {};
 
   @override
   void initState() {
     super.initState();
-    _loadPhoneData();
+    _loadPhoneData(); // Quay lại dùng hàm tự load dữ liệu
   }
 
   Future<void> _loadPhoneData() async {
-    final jsonString = await rootBundle.loadString('assets/mock_data.json');
-    final decoded = json.decode(jsonString) as Map<String, dynamic>;
+    try {
+      final jsonString = await rootBundle.loadString('assets/mock_data.json');
+      final decoded = json.decode(jsonString) as Map<String, dynamic>;
 
-    final contacts = List<Map<String, dynamic>>.from(decoded['contacts'] ?? []);
-    final callLogs =
-        List<Map<String, dynamic>>.from(decoded['call_logs'] ?? []);
+      final contacts = List<Map<String, dynamic>>.from(decoded['contacts'] ?? []);
+      final callLogs = List<Map<String, dynamic>>.from(decoded['call_logs'] ?? []);
 
-    final map = <String, String>{};
-    for (final c in contacts) {
-      final name = (c['name'] ?? '').toString();
-      final number = (c['number'] ?? '').toString();
-      if (number.isNotEmpty) map[number] = name;
+      final map = <String, String>{};
+      for (final c in contacts) {
+        final name = (c['name'] ?? '').toString();
+        final number = (c['number'] ?? '').toString();
+        if (number.isNotEmpty) map[number] = name;
+      }
+
+      callLogs.sort((a, b) {
+        final ta = DateTime.tryParse((a['timestamp'] ?? '').toString());
+        final tb = DateTime.tryParse((b['timestamp'] ?? '').toString());
+        if (ta == null && tb == null) return 0;
+        if (ta == null) return 1;
+        if (tb == null) return -1;
+        return tb.compareTo(ta);
+      });
+
+      if (mounted) {
+        setState(() {
+          _contacts = contacts;
+          _callLogs = callLogs;
+          _numberToName
+            ..clear()
+            ..addAll(map);
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Lỗi load mock data: $e");
     }
-
-    // Sort call logs mới -> cũ theo timestamp
-    callLogs.sort((a, b) {
-      final ta = DateTime.tryParse((a['timestamp'] ?? '').toString());
-      final tb = DateTime.tryParse((b['timestamp'] ?? '').toString());
-      if (ta == null && tb == null) return 0;
-      if (ta == null) return 1;
-      if (tb == null) return -1;
-      return tb.compareTo(ta);
-    });
-
-    setState(() {
-      _contacts = contacts;
-      _callLogs = callLogs;
-      _numberToName
-        ..clear()
-        ..addAll(map);
-      _isLoading = false;
-    });
   }
 
   void _openPhonePage({required String number, required String name}) {
@@ -73,8 +86,6 @@ class _PhoneCardState extends State<PhoneCard> {
       go();
       return;
     }
-
-    // Không điều hướng trong Home (theo yêu cầu). Gợi ý người dùng.
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -115,9 +126,7 @@ class _PhoneCardState extends State<PhoneCard> {
           // Nội dung
           Expanded(
             child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
+                ? const Center(child: CircularProgressIndicator(color: Colors.white))
                 : (_tabIndex == 0 ? _buildRecentsList() : _buildContactsList()),
           ),
         ],
@@ -150,15 +159,10 @@ class _PhoneCardState extends State<PhoneCard> {
     );
   }
 
-  // ===== RECENTS =====
+  // ===== RECENTS (Dùng dữ liệu nội bộ _callLogs) =====
   Widget _buildRecentsList() {
     if (_callLogs.isEmpty) {
-      return const Center(
-        child: Text(
-          "Chưa có lịch sử cuộc gọi",
-          style: TextStyle(color: Colors.white70),
-        ),
-      );
+      return const Center(child: Text("Chưa có lịch sử cuộc gọi", style: TextStyle(color: Colors.white70)));
     }
 
     return ListView.builder(
@@ -166,22 +170,17 @@ class _PhoneCardState extends State<PhoneCard> {
       itemCount: _callLogs.length,
       itemBuilder: (ctx, i) {
         final item = _callLogs[i];
-
         final number = (item['number'] ?? '').toString();
-        final type =
-            (item['type'] ?? '').toString(); // incoming/missed/outgoing
+        final type = (item['type'] ?? '').toString();
         final duration = (item['duration'] ?? 0) as int;
         final ts = DateTime.tryParse((item['timestamp'] ?? '').toString());
 
         final name = _numberToName[number] ?? number;
         final timeLabel = _formatRelativeTime(ts);
-
         final iconInfo = _iconForCallType(type);
 
         return ListTile(
-          onTap: () {
-            widget.onGoPhone?.call();
-          },
+          onTap: () => widget.onGoPhone?.call(),
           dense: true,
           contentPadding: EdgeInsets.zero,
           leading: CircleAvatar(
@@ -206,12 +205,10 @@ class _PhoneCardState extends State<PhoneCard> {
     );
   }
 
-  // ===== CONTACTS =====
+  // ===== CONTACTS (Dùng dữ liệu nội bộ _contacts) =====
   Widget _buildContactsList() {
     if (_contacts.isEmpty) {
-      return const Center(
-        child: Text("Chưa có danh bạ", style: TextStyle(color: Colors.white70)),
-      );
+      return const Center(child: Text("Chưa có danh bạ", style: TextStyle(color: Colors.white70)));
     }
 
     return GridView.builder(
@@ -243,30 +240,20 @@ class _PhoneCardState extends State<PhoneCard> {
                 CircleAvatar(
                   radius: 14,
                   backgroundColor: Colors.grey,
-                  child: Text(
-                    initial,
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
+                  child: Text(initial, style: const TextStyle(color: Colors.white, fontSize: 12)),
                 ),
                 const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
                 ),
-                Text(
-                  number,
-                  style: const TextStyle(color: Colors.grey, fontSize: 10),
-                ),
+                Text(number, style: const TextStyle(color: Colors.grey, fontSize: 10)),
               ],
             ),
           ),
@@ -278,14 +265,10 @@ class _PhoneCardState extends State<PhoneCard> {
   // ===== HELPERS =====
   ({IconData icon, Color color}) _iconForCallType(String type) {
     switch (type) {
-      case 'missed':
-        return (icon: Icons.call_missed, color: Colors.redAccent);
-      case 'incoming':
-        return (icon: Icons.call_received, color: Colors.blueAccent);
-      case 'outgoing':
-        return (icon: Icons.call_made, color: Colors.greenAccent);
-      default:
-        return (icon: Icons.call, color: Colors.white70);
+      case 'missed': return (icon: Icons.call_missed, color: Colors.redAccent);
+      case 'incoming': return (icon: Icons.call_received, color: Colors.blueAccent);
+      case 'outgoing': return (icon: Icons.call_made, color: Colors.greenAccent);
+      default: return (icon: Icons.call, color: Colors.white70);
     }
   }
 

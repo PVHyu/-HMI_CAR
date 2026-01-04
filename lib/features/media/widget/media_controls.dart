@@ -1,60 +1,61 @@
 import 'package:flutter/material.dart';
-import '../logic/media_controller.dart';
+import '../../media/viewmodels/media_viewmodel.dart'; // Import ViewModel
 
 class MediaControls extends StatelessWidget {
-  final MediaController controller;
+  // SỬA: Đổi kiểu dữ liệu từ MediaController sang MediaViewModel
+  final MediaViewModel controller; 
   final bool isFull;
 
-  const MediaControls(
-      {super.key, required this.controller, required this.isFull});
+  const MediaControls({
+    super.key,
+    required this.controller,
+    this.isFull = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Kích thước icon tùy chỉnh theo chế độ
-    double iconSize = isFull ? 45 : 35;
-    double playSize = isFull ? 70 : 60;
-
     return Row(
-      // Nếu Full: Căn giữa. Nếu Mini: Căn đều 2 bên
-      mainAxisAlignment:
-          isFull ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Các nút phụ cho Mini Player (Shuffle)
         if (!isFull)
           IconButton(
-              icon: const Icon(Icons.shuffle, color: Colors.white70),
-              onPressed: () {}),
-
-        // 1. Nút Previous
+            icon: const Icon(Icons.shuffle, color: Colors.white70),
+            onPressed: () {},
+          ),
+        
+        // Nút Previous
         IconButton(
-            icon:
-                Icon(Icons.skip_previous, size: iconSize, color: Colors.white),
-            onPressed: controller.previousSong),
-
-        const SizedBox(width: 10),
-
-        // 2. Nút Play/Pause
-        GestureDetector(
-          onTap: controller.togglePlay,
-          child: Icon(
-              controller.isPlaying
-                  ? Icons.pause_circle_filled
-                  : Icons.play_circle_filled,
-              size: playSize,
-              color: Colors.white),
+          icon: const Icon(Icons.skip_previous, color: Colors.white, size: 30),
+          onPressed: controller.previousSong, // Gọi hàm từ ViewModel
         ),
 
-        const SizedBox(width: 10),
+        // Nút Play/Pause
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: IconButton(
+            icon: Icon(
+              controller.isPlaying ? Icons.pause : Icons.play_arrow,
+              color: Colors.black,
+            ),
+            onPressed: controller.togglePlay,
+          ),
+        ),
 
-        // 3. Nút Next
+        // Nút Next
         IconButton(
-            icon: Icon(Icons.skip_next, size: iconSize, color: Colors.white),
-            onPressed: controller.nextSong),
+          icon: const Icon(Icons.skip_next, color: Colors.white, size: 30),
+          onPressed: controller.nextSong,
+        ),
 
         if (!isFull)
-          IconButton(
-              icon: const Icon(Icons.fullscreen, color: Colors.white),
-              onPressed: controller.toggleViewMode),
+           IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white70),
+            onPressed: () {},
+          ),
       ],
     );
   }
