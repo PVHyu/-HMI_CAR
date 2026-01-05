@@ -1,4 +1,4 @@
-enum HmiPage { home, phone, media, vehicle, settings}
+enum HmiPage { home, phone, media, vehicle}
 
 enum PhoneRightView { contacts, history }
 
