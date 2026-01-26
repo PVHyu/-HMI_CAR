@@ -8,15 +8,11 @@
       "version": "1.0.0+1",
       "dependencies": [
         "cupertino_icons",
-        "flutter",
-        "flutter_map",
-        "http",
-        "latlong2"
+        "flutter"
       ],
       "devDependencies": [
         "flutter_lints",
-        "flutter_test",
-        "screen_brightness"
+        "flutter_test"
       ]
     },
     {
@@ -24,18 +20,6 @@
       "version": "4.0.0",
       "dependencies": [
         "lints"
-      ]
-    },
-    {
-      "name": "screen_brightness",
-      "version": "0.2.2+1",
-      "dependencies": [
-        "flutter",
-        "screen_brightness_android",
-        "screen_brightness_ios",
-        "screen_brightness_macos",
-        "screen_brightness_platform_interface",
-        "screen_brightness_windows"
       ]
     },
     {
@@ -54,42 +38,6 @@
         "stream_channel",
         "test_api",
         "vector_math"
-      ]
-    },
-    {
-      "name": "http",
-      "version": "1.6.0",
-      "dependencies": [
-        "async",
-        "http_parser",
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "latlong2",
-      "version": "0.9.1",
-      "dependencies": [
-        "intl"
-      ]
-    },
-    {
-      "name": "flutter_map",
-      "version": "8.2.2",
-      "dependencies": [
-        "async",
-        "collection",
-        "dart_earcut",
-        "dart_polylabel2",
-        "flutter",
-        "http",
-        "latlong2",
-        "logger",
-        "meta",
-        "path",
-        "path_provider",
-        "proj4dart",
-        "uuid"
       ]
     },
     {
@@ -113,46 +61,6 @@
       "name": "lints",
       "version": "4.0.0",
       "dependencies": []
-    },
-    {
-      "name": "screen_brightness_windows",
-      "version": "0.1.3",
-      "dependencies": [
-        "flutter",
-        "screen_brightness_platform_interface"
-      ]
-    },
-    {
-      "name": "screen_brightness_macos",
-      "version": "0.1.0+1",
-      "dependencies": [
-        "flutter",
-        "screen_brightness_platform_interface"
-      ]
-    },
-    {
-      "name": "screen_brightness_ios",
-      "version": "0.1.0",
-      "dependencies": [
-        "flutter",
-        "screen_brightness_platform_interface"
-      ]
-    },
-    {
-      "name": "screen_brightness_android",
-      "version": "0.1.0+2",
-      "dependencies": [
-        "flutter",
-        "screen_brightness_platform_interface"
-      ]
-    },
-    {
-      "name": "screen_brightness_platform_interface",
-      "version": "0.1.0",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface"
-      ]
     },
     {
       "name": "stream_channel",
@@ -239,88 +147,6 @@
       ]
     },
     {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "http_parser",
-      "version": "4.1.2",
-      "dependencies": [
-        "collection",
-        "source_span",
-        "string_scanner",
-        "typed_data"
-      ]
-    },
-    {
-      "name": "async",
-      "version": "2.11.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "intl",
-      "version": "0.20.2",
-      "dependencies": [
-        "clock",
-        "meta",
-        "path"
-      ]
-    },
-    {
-      "name": "uuid",
-      "version": "4.5.2",
-      "dependencies": [
-        "crypto",
-        "fixnum",
-        "meta"
-      ]
-    },
-    {
-      "name": "proj4dart",
-      "version": "2.1.0",
-      "dependencies": [
-        "meta",
-        "mgrs_dart",
-        "wkt_parser"
-      ]
-    },
-    {
-      "name": "path_provider",
-      "version": "2.1.5",
-      "dependencies": [
-        "flutter",
-        "path_provider_android",
-        "path_provider_foundation",
-        "path_provider_linux",
-        "path_provider_platform_interface",
-        "path_provider_windows"
-      ]
-    },
-    {
-      "name": "logger",
-      "version": "2.6.2",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "dart_polylabel2",
-      "version": "1.0.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
-      "name": "dart_earcut",
-      "version": "1.2.0",
-      "dependencies": []
-    },
-    {
       "name": "sky_engine",
       "version": "0.0.0",
       "dependencies": []
@@ -338,9 +164,10 @@
       "dependencies": []
     },
     {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
+      "name": "async",
+      "version": "2.11.0",
       "dependencies": [
+        "collection",
         "meta"
       ]
     },
@@ -351,17 +178,6 @@
         "leak_tracker",
         "matcher",
         "meta"
-      ]
-    },
-    {
-      "name": "leak_tracker",
-      "version": "11.0.2",
-      "dependencies": [
-        "clock",
-        "collection",
-        "meta",
-        "path",
-        "vm_service"
       ]
     },
     {
@@ -394,205 +210,20 @@
       ]
     },
     {
-      "name": "typed_data",
-      "version": "1.4.0",
+      "name": "leak_tracker",
+      "version": "11.0.2",
       "dependencies": [
-        "collection"
-      ]
-    },
-    {
-      "name": "fixnum",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "crypto",
-      "version": "3.0.7",
-      "dependencies": [
-        "typed_data"
-      ]
-    },
-    {
-      "name": "wkt_parser",
-      "version": "2.0.0",
-      "dependencies": []
-    },
-    {
-      "name": "mgrs_dart",
-      "version": "2.0.0",
-      "dependencies": [
-        "unicode"
-      ]
-    },
-    {
-      "name": "path_provider_windows",
-      "version": "2.3.0",
-      "dependencies": [
-        "ffi",
-        "flutter",
+        "clock",
+        "collection",
+        "meta",
         "path",
-        "path_provider_platform_interface"
-      ]
-    },
-    {
-      "name": "path_provider_platform_interface",
-      "version": "2.1.2",
-      "dependencies": [
-        "flutter",
-        "platform",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "path_provider_linux",
-      "version": "2.2.1",
-      "dependencies": [
-        "ffi",
-        "flutter",
-        "path",
-        "path_provider_platform_interface",
-        "xdg_directories"
-      ]
-    },
-    {
-      "name": "path_provider_foundation",
-      "version": "2.6.0",
-      "dependencies": [
-        "ffi",
-        "flutter",
-        "objective_c",
-        "path_provider_platform_interface"
-      ]
-    },
-    {
-      "name": "path_provider_android",
-      "version": "2.2.22",
-      "dependencies": [
-        "flutter",
-        "path_provider_platform_interface"
+        "vm_service"
       ]
     },
     {
       "name": "vm_service",
       "version": "14.2.5",
       "dependencies": []
-    },
-    {
-      "name": "unicode",
-      "version": "0.3.1",
-      "dependencies": [
-        "lists"
-      ]
-    },
-    {
-      "name": "ffi",
-      "version": "2.1.5",
-      "dependencies": []
-    },
-    {
-      "name": "platform",
-      "version": "3.1.6",
-      "dependencies": []
-    },
-    {
-      "name": "xdg_directories",
-      "version": "1.1.0",
-      "dependencies": [
-        "meta",
-        "path"
-      ]
-    },
-    {
-      "name": "objective_c",
-      "version": "9.2.4",
-      "dependencies": [
-        "code_assets",
-        "collection",
-        "ffi",
-        "hooks",
-        "logging",
-        "native_toolchain_c",
-        "pub_semver"
-      ]
-    },
-    {
-      "name": "lists",
-      "version": "1.0.1",
-      "dependencies": [
-        "meta"
-      ]
-    },
-    {
-      "name": "pub_semver",
-      "version": "2.2.0",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
-      "name": "native_toolchain_c",
-      "version": "0.17.4",
-      "dependencies": [
-        "code_assets",
-        "glob",
-        "hooks",
-        "logging",
-        "meta",
-        "pub_semver"
-      ]
-    },
-    {
-      "name": "logging",
-      "version": "1.3.0",
-      "dependencies": []
-    },
-    {
-      "name": "hooks",
-      "version": "1.0.0",
-      "dependencies": [
-        "collection",
-        "crypto",
-        "logging",
-        "meta",
-        "pub_semver",
-        "yaml"
-      ]
-    },
-    {
-      "name": "code_assets",
-      "version": "1.0.0",
-      "dependencies": [
-        "collection",
-        "hooks"
-      ]
-    },
-    {
-      "name": "glob",
-      "version": "2.1.3",
-      "dependencies": [
-        "async",
-        "collection",
-        "file",
-        "path",
-        "string_scanner"
-      ]
-    },
-    {
-      "name": "yaml",
-      "version": "3.1.3",
-      "dependencies": [
-        "collection",
-        "source_span",
-        "string_scanner"
-      ]
-    },
-    {
-      "name": "file",
-      "version": "7.0.1",
-      "dependencies": [
-        "meta",
-        "path"
-      ]
     }
   ],
   "configVersion": 1
