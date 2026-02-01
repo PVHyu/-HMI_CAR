@@ -5,6 +5,7 @@ Phần protocol để giao tiếp giữa frontend và backend chưa xong
 Phần frontend chưa hoàn thiện
 
 =======================================================
+
 Để chạy thử phần Backend:
 1. Open project
 2. cd services/media_service/build
