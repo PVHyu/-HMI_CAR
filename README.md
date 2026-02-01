@@ -12,6 +12,7 @@ Phần frontend chưa hoàn thiện
 3. Chạy lệnh Cmake ..
 4. Tiếp theo chạy lệnh make
 5. Chạy lệnh sudo -E env XDG_RUNTIME_DIR=/run/user/$(id -u) ./MediaService
-6. Khởi chạy thành công
+6. Cắm USB để scan file nhạc ở định dạng .mp3
+7. Khởi chạy thành công
 
 Lưu ý: Có thể lần chạy đầu tiên khi pull code về máy sẽ bị lỗi vì chưa có những thư viện, hãy kiểm tra file CMakeLists.txt để bổ sung thư viện
