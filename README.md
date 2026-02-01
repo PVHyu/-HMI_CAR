@@ -1,7 +1,7 @@
 # HMI_CAR
 Project gồm backend và frontend
 Xử lý backend, cụ thể là phần service cho usb (scan và detect usb mỗi khi hot plug ) đã hoàn thành.
-Phần protocol để giao tiếp giữa frontend và backend chưa xong 
+Phần protocol (grpc) chưa có để giao tiếp giữa frontend và backend
 Phần frontend chưa hoàn thiện
 
 =======================================================
